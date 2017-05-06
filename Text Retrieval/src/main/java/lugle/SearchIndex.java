@@ -36,9 +36,12 @@ public class SearchIndex implements EvalInterface{
         try {
             IndexReader indexReader = DirectoryReader.open(index);
             IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+            // construct Lucene-Query from input
             Query query = new QueryParser("body", new EnglishAnalyzer()).parse(input);
-
+            // show the top 10 results
             TopDocs docs = indexSearcher.search(query, 10);
+
+            // Print the results
             System.out.println("Found " + docs.totalHits + " documents.");
             for(ScoreDoc scoreDoc : docs.scoreDocs) {
                 Document document = indexSearcher.doc(scoreDoc.doc);
@@ -46,7 +49,9 @@ public class SearchIndex implements EvalInterface{
                 if(document.get("title") != null) {
                     System.out.println(document.get("title"));
                 }
+                System.out.println();
             }
+            System.out.println();
             indexReader.close();
         } catch (IOException e) {
             System.err.println("Error reading index");

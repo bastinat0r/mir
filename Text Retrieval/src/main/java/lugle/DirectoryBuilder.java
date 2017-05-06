@@ -72,7 +72,7 @@ public class DirectoryBuilder {
                 documentHandle.document.add(new TextField("body", reader));
                 break;
             }
-            case "text/html": {
+            default: {
                 String title;
                 Metadata metadata = new Metadata();
                 AutoDetectParser autoDetectParser = new AutoDetectParser();

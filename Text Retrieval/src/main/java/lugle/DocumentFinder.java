@@ -31,6 +31,7 @@ public class DocumentFinder {
             Files.walkFileTree(path, documentVisitor);
         } catch (IOException ex) {
             System.err.println("Could not index Text-Files");
+            ex.printStackTrace();
 
         }
         return documentVisitor.documentHandles;
@@ -57,7 +58,8 @@ public class DocumentFinder {
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
             try {
-                if (Files.isDirectory(path) || !Files.exists(path)) {
+                // path.toFile().exists != Files.exists(path) ???
+                if (Files.isDirectory(path) || !path.toFile().exists()) {
                     return FileVisitResult.CONTINUE;
                 }
                 String filetype = tika.detect(path.toFile());
@@ -68,6 +70,10 @@ public class DocumentFinder {
                         break;
                     }
                     case "text/html": {
+                        documentHandles.add(new DocumentHandle(path.toFile(), filetype));
+                        break;
+                    }
+                    case "application/pdf": {
                         documentHandles.add(new DocumentHandle(path.toFile(), filetype));
                         break;
                     }
