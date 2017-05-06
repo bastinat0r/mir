@@ -1,3 +1,5 @@
+package lugle;
+
 import org.apache.tika.Tika;
 
 import java.io.IOException;

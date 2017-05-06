@@ -1,3 +1,5 @@
+package lugle;
+
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.store.Directory;
 

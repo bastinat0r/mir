@@ -1,3 +1,6 @@
+package lugle;
+
+import javax.sound.midi.SysexMessage;
 import java.util.Scanner;
 
 /**
@@ -9,7 +12,7 @@ public class Repl {
 
     /**
      * Makes a new repl
-     * @param inputScanner input to this Repl
+     * @param inputScanner input to this lugle.Repl
      * @param evalInterface how to evaluate the input
      */
     public Repl(Scanner inputScanner, EvalInterface evalInterface) {
@@ -21,7 +24,7 @@ public class Repl {
      * reads a line from the input
      * @return string that was read
      */
-    public String read() {
+    public String read() throws java.util.NoSuchElementException {
         System.out.print("query :>");
         return inputScanner.nextLine();
     }
@@ -32,8 +35,13 @@ public class Repl {
      * @return true if the program will continue after the execution of this loop-cycle
      */
     public boolean next(){
-        String in = read();
-        return evaluator.eval(in);
+        try {
+            String in = read();
+            return evaluator.eval(in);
+        } catch (java.util.NoSuchElementException e) {
+            System.out.println("Exiting Program!\n");
+        }
+        return false;
     }
 
     /**

@@ -1,3 +1,5 @@
+package lugle;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -28,7 +30,7 @@ public class DirectoryBuilder {
      * Class used to create a LUCENE index
      *
      * @param analyzer to be used
-     * @param documentHandles the documentHandles created by DocumentFinder
+     * @param documentHandles the documentHandles created by lugle.DocumentFinder
      */
     public DirectoryBuilder(Analyzer analyzer, List<DocumentHandle> documentHandles) {
         this.analyzer = analyzer;
