@@ -23,6 +23,7 @@ public class DocumentFinder {
 
     /**
      * Get all the documents in the given path with either text/plain or text/html as their content-type
+     *
      * @return List of all the documents in the given folder
      */
     List<DocumentHandle> getDocuments() {
