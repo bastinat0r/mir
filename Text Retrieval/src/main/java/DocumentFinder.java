@@ -1,12 +1,5 @@
 import org.apache.tika.Tika;
-import org.apache.tika.detect.Detector;
-import org.apache.tika.detect.MagicDetector;
-import org.apache.tika.detect.NameDetector;
-import org.apache.tika.detect.TextDetector;
-import org.apache.tika.detect.TypeDetector;
-import org.apache.tika.metadata.Metadata;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
@@ -14,18 +7,23 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sebastian on 5/2/17.
  */
-public class FileFinder {
+public class DocumentFinder {
     Path path;
 
-    public FileFinder(Path path) {
+    public DocumentFinder(Path path) {
         this.path = path;
     }
 
-    ArrayList<File> getTextFiles() {
+    /**
+     * Get all the documents in the given path with either text/plain or text/html as their content-type
+     * @return List of all the documents in the given folder
+     */
+    List<DocumentHandle> getDocuments() {
         DocumentVisitor documentVisitor = new DocumentVisitor();
         try {
             Files.walkFileTree(path, documentVisitor);
@@ -33,15 +31,19 @@ public class FileFinder {
             System.err.println("Could not index Text-Files");
 
         }
-        return documentVisitor.files;
+        return documentVisitor.documentHandles;
     }
 
+    /**
+     * FileVisitor for usage with Files.walkFileTree
+     * The Visit File function adds text/plain and text/html files to the list of document handles
+     */
     class DocumentVisitor implements FileVisitor<Path>{
-        ArrayList<File> files;
+        List<DocumentHandle> documentHandles;
         Tika tika;
 
         public DocumentVisitor() {
-            files = new ArrayList<>();
+            documentHandles = new ArrayList<>();
             tika = new Tika();
         }
 
@@ -57,11 +59,15 @@ public class FileFinder {
                     return FileVisitResult.CONTINUE;
                 }
                 String filetype = tika.detect(path.toFile());
-                System.out.println(path.toAbsolutePath() + " = " + filetype);
                 // check if file is txt
                 switch (filetype) {
                     case "text/plain": {
-                        files.add(path.toFile());
+                        documentHandles.add(new DocumentHandle(path.toFile(), filetype));
+                        break;
+                    }
+                    case "text/html": {
+                        documentHandles.add(new DocumentHandle(path.toFile(), filetype));
+                        break;
                     }
                 }
             } catch (java.lang.NoSuchMethodError e) {

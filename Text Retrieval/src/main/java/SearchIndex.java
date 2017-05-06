@@ -25,7 +25,7 @@ public class SearchIndex implements EvalInterface{
 
     /**
      * evaluates the input and prints the result
-     * @param input
+     * @param input query given by the user
      * @return true if the repl should continue after this evaluation phase
      */
     @Override
@@ -41,6 +41,9 @@ public class SearchIndex implements EvalInterface{
             for(ScoreDoc scoreDoc : docs.scoreDocs) {
                 Document document = indexSearcher.doc(scoreDoc.doc);
                 System.out.println(document.get("path"));
+                if(document.get("title") != null) {
+                    System.out.println(document.get("title"));
+                }
             }
             indexReader.close();
         } catch (IOException e) {
