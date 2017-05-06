@@ -2,9 +2,10 @@
 
 ## Running the Program
 
-java -jar Text\ Retrieval.jar [path to document folder]
+java -jar Lugle.jar [path to document folder]
 
 The program is run using the command above. If no path is specified the current folder will be used.
+You can create a new jar file using gradle shadowJar.
 
 
 ## Function
