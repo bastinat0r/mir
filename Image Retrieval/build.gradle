@@ -1,0 +1,64 @@
+// build.gradle
+version = '1.0'
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.tika', name: 'tika-core', version: '1.14'
+    compile group: 'org.apache.tika', name: 'tika-parsers', version: '1.14'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'ImageRetrieval',
+            'Implementation-Version': version,
+            'Main-Class': 'imageRetrieval.ImageRetrieval'
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+        resources {
+            srcDirs = ['src/main/resources']
+        }
+    }    
+}
+
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'ImageRetrievale',
+            'Implementation-Version': version,
+            'Main-Class': 'imageRetrieval.ImageRetrieval'
+    }
+    baseName = project.name + '-standalone'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+
+task execute(type: JavaExec) {
+   classpath sourceSets.main.runtimeClasspath
+   main = "imageRetrieval.ImageRetrieval"
+}
