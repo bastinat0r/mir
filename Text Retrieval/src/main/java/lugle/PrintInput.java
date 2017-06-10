@@ -1,6 +1,9 @@
 package lugle;
 
 /**
+ * Used to test the repl-class
+ * When the user enters an input it will be echoed back.
+ *
  * Created by sebastian on 5/2/17.
  */
 public class PrintInput implements EvalInterface{

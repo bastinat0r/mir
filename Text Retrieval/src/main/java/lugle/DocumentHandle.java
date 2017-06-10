@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * wrapper class to save java.io.file handle, type and corrosponding lucene-document in one place
  * Created by sebastian on 5/5/17.
  */
 public class DocumentHandle {

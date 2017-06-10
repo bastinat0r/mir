@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Class used to extract DocumentHandle(s) from all files with matching file-type in a given directory.
+ *
  * Created by sebastian on 5/2/17.
  */
 public class DocumentFinder {
@@ -56,6 +58,14 @@ public class DocumentFinder {
             return FileVisitResult.CONTINUE;
         }
 
+        /**
+         * visitFile handler for Files.walkFileTree
+         *
+         * @param path current file
+         * @param basicFileAttributes attr
+         * @return continue ...
+         * @throws IOException
+         */
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
             try {
@@ -64,7 +74,7 @@ public class DocumentFinder {
                     return FileVisitResult.CONTINUE;
                 }
                 String filetype = tika.detect(path.toFile());
-                // check if file is txt
+                // check if file is txt/html/...
                 switch (filetype) {
                     case "text/plain": {
                         documentHandles.add(new DocumentHandle(path.toFile(), filetype));

@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 /**
+ * Main class.
+ * Setup and Running the program ist done from a static context
  * Created by sebastian on 4/26/17.
  */
 public class Lugle {

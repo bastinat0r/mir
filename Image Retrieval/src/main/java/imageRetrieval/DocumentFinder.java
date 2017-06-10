@@ -77,6 +77,7 @@ public class DocumentFinder {
                 // check if file is txt/html/...
                 switch (filetype) {
                     case "image/jpeg": {
+                        documentHandles.add(new ImageHandle(path.toFile(), filetype));
                         System.out.println("jpg: " + path.getFileName());
                         break;
                     }

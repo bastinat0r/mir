@@ -20,6 +20,7 @@ import java.io.Reader;
 import java.util.List;
 
 /**
+ * Builder-Class used to create a LUCENE index
  * Created by sebastian on 5/5/17.
  */
 public class DirectoryBuilder {
@@ -27,7 +28,7 @@ public class DirectoryBuilder {
     List<DocumentHandle> documentHandles;
 
     /**
-     * Class used to create a LUCENE index
+     * Initialize the DirectoryBuilder with analyzer and documentHandles
      *
      * @param analyzer to be used
      * @param documentHandles the documentHandles created by lugle.DocumentFinder
