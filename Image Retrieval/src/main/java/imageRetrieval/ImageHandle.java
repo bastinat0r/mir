@@ -16,9 +16,7 @@ import java.util.ArrayList;
 /**
  * Container for one Image file
  *
- * @member file : fileHandle
- * @member features : features that have been extracted or read from files
- * @member version : used to decide if previously saved features are still valid
+ *
  * Created by sebastian on 6/8/17.
  */
 public class ImageHandle {
