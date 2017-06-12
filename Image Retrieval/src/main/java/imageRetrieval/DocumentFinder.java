@@ -76,6 +76,8 @@ public class DocumentFinder {
                 String filetype = tika.detect(path.toFile());
                 // check if file is txt/html/...
                 switch (filetype) {
+                    case "text/plain":
+                        break;
                     case "image/jpeg": {
                         documentHandles.add(new ImageHandle(path.toFile(), filetype));
                         System.out.println("jpg: " + path.getFileName());

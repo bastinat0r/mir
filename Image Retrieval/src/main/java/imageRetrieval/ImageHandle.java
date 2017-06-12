@@ -1,5 +1,9 @@
 package imageRetrieval;
 
+import Jama.Matrix;
+import Jama.SingularValueDecomposition;
+import net.coobird.thumbnailator.Thumbnails;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -16,53 +20,93 @@ public class ImageHandle {
     String filetype;
     File file;
     Features features = null;
+    public static int version = 3;
 
 
-    public Features extractFeatures() {
-        if(features != null) {
-            return features;
-        }
+    public void extractFeatures() {
         BufferedImage bufferedImage;
         try {
             bufferedImage = ImageIO.read(file);
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return;
         }
-        ArrayList<Double> featureValues = new ArrayList<Double>(30);
+
+        ArrayList<Double> histogramValues = getHistogram(bufferedImage);
+
+        Matrix matrix = getGrayScaleMatrix(bufferedImage);
+        SingularValueDecomposition svd = new SingularValueDecomposition(matrix);
+
+        Features.FeaturesBuilder featuresBuilder = new Features.FeaturesBuilder(this.version);
+        featuresBuilder.histogram = histogramValues;
+        featuresBuilder.grayScaleSVD = new GrayScaleSVD(svd, 10); // rank 10 may be a little over the top ...
+        this.features = featuresBuilder.create();
+    }
+
+    public Matrix getGrayScaleMatrix(BufferedImage bufferedImage) {
+        BufferedImage imageSmall = null;
+        try {
+            imageSmall = Thumbnails.of(bufferedImage).size(200,200).asBufferedImage();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BufferedImage imageGray = new BufferedImage( imageSmall.getWidth(), imageSmall.getHeight(), BufferedImage.TYPE_BYTE_GRAY );
+        Graphics g = imageGray.getGraphics();
+        g.drawImage( imageSmall, 0, 0, null );
+        g.dispose();
+        double [][] grayScale = new double[200][200];
+        for (int y = 0; y < imageGray.getHeight(); y++) {
+            for (int x = 0; x < imageGray.getWidth(); x++) {
+                int gray= imageGray.getRGB(x, y)& 0xFF;
+                grayScale[x][y] = (double) gray / 256;
+            }
+        }
+        return new Matrix(grayScale);
+    }
+
+    private ArrayList<Double> getHistogram(BufferedImage bufferedImage) {
+        ArrayList<Double> histogramValues = new ArrayList<Double>(30);
         for (int i = 0; i < 30; i++) {
-            featureValues.add(0.00);
+            histogramValues.add(0.00);
         }
-        for (int x = 0; x < bufferedImage.getWidth(); x++) {
-            for (int y = 0; y < bufferedImage.getHeight(); y++) {
+        int pixel[];
+        float[] hsv = {0,0,0};
+        int featureVectorIndex;
+        for (int y = 0; y < bufferedImage.getHeight(); y++) {
+            for (int x = 0; x < bufferedImage.getWidth(); x++) {
                 // compute bins
-                Color color = new Color(bufferedImage.getRGB(x, y));
-                float[] hsv = {0,0,0};
-                int featureVectorIndex;
-                Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsv);
+                pixel = bufferedImage.getRaster().getPixel(x, y , new int[3]);
+                Color.RGBtoHSB(pixel[0], pixel[1], pixel[2], hsv);
                 featureVectorIndex = (int) (hsv[0] * 10);
                 if(featureVectorIndex >= 10)
                     featureVectorIndex = 9;
-                featureValues.set(featureVectorIndex, featureValues.get(featureVectorIndex) + 1);
+                histogramValues.set(featureVectorIndex, histogramValues.get(featureVectorIndex) + 1);
                 featureVectorIndex = (int) (hsv[1] * 10 + 10);
                 if(featureVectorIndex >= 20)
                     featureVectorIndex = 19;
-                featureValues.set(featureVectorIndex, featureValues.get(featureVectorIndex) + 1);
+                histogramValues.set(featureVectorIndex, histogramValues.get(featureVectorIndex) + 1);
                 featureVectorIndex = (int) (hsv[2] * 10 + 20);
                 if(featureVectorIndex >= 30)
                     featureVectorIndex = 29;
-                featureValues.set(featureVectorIndex, featureValues.get(featureVectorIndex) + 1);
+                histogramValues.set(featureVectorIndex, histogramValues.get(featureVectorIndex) + 1);
             }
         }
-
-        this.features = new Features(featureValues);
-        return new Features(featureValues);
+        return histogramValues;
     }
+
+
+
 
     public double similarity(ImageHandle other) {
-        return this.extractFeatures().cosine_similarity(other.extractFeatures());
+        double s1 = this.getFeatures().matrixDistance(other.getFeatures());
+        double s2 = this.getFeatures().cosine_similarity(other.getFeatures());
+        return s2 / s1;
     }
 
+
+    public Features getFeatures() {
+        return features;
+    }
 
     public void display_similarity(ImageHandle other) {
         try {
@@ -113,6 +157,20 @@ public class ImageHandle {
     public ImageHandle(File file, String filetype) {
         this.filetype = filetype;
         this.file = file;
+        File featuresFile = new File(file.getAbsoluteFile() + ".features");
+        if(featuresFile.exists() ) {
+            // deserialise old features
+            Features.FeaturesBuilder featuresBuilder = new Features.FeaturesBuilder(0);
+            features = featuresBuilder.create(featuresFile);
+        }
+        if(features == null || features.version < this.version) {
+            // recompute features
+            System.out.println("Saving features version " + version + "  for " + file.getName());
+            this.extractFeatures();
+
+            // serialise features
+            this.features.save(featuresFile);
+        }
     }
 
 }

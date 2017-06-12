@@ -4,7 +4,6 @@ import org.apache.tika.Tika;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -46,30 +45,17 @@ public class ImageRetrievalSimple implements EvalInterface {
             return true;
         }
 
-        imageHandles.sort(new imageComperator(imageHandle));
-        imageHandle.display_similarity(imageHandles.get(0));
-        imageHandle.display_similarity(imageHandles.get(1));
-        imageHandle.display_similarity(imageHandles.get(2));
-        imageHandle.display_similarity(imageHandles.get(imageHandles.size() - 3));
-        imageHandle.display_similarity(imageHandles.get(imageHandles.size() - 2));
-        imageHandle.display_similarity(imageHandles.get(imageHandles.size() - 1));
+        imageHandles.sort(new ImageComperator(imageHandle));
+        for (int i = 0; i < 5; i++) {
+            ImageHandle imageHandle1 = imageHandles.get(i);
+            imageHandle1.display_similarity(imageHandle);
+            System.out.println(i + ": " + imageHandle.file.getAbsolutePath());
+            System.out.println("Histogram-Similarity: " + imageHandle1.getFeatures().cosine_similarity(imageHandle.getFeatures()));
+            System.out.println("Matrix-Distance: " + imageHandle1.getFeatures().matrixDistance(imageHandle.getFeatures()));
+        }
 
 
         return true;
     }
-    private class imageComperator implements Comparator<ImageHandle> {
-        ImageHandle reference;
 
-        public imageComperator(ImageHandle reference) {
-            this.reference = reference;
-        }
-
-        @Override
-        public int compare(ImageHandle imageHandle, ImageHandle t1) {
-            if (reference.similarity(imageHandle) > reference.similarity(t1))
-                return 1;
-            else
-                return -1;
-        }
-    }
 }
