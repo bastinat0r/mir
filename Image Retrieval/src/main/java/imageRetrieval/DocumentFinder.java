@@ -24,7 +24,7 @@ public class DocumentFinder {
     }
 
     /**
-     * Get all the documents in the given path with either text/plain or text/html as their content-type
+     * Get all the documents in the given path with image/* as their content-type
      *
      * @return List of all the documents in the given folder
      */
@@ -33,7 +33,7 @@ public class DocumentFinder {
         try {
             Files.walkFileTree(path, documentVisitor);
         } catch (IOException ex) {
-            System.err.println("Could not index Text-Files");
+            System.err.println("Could not index Files");
             ex.printStackTrace();
 
         }
@@ -80,6 +80,25 @@ public class DocumentFinder {
                     case "image/jpeg": {
                         documentHandles.add(new ImageHandle(path.toFile(), filetype));
                         System.out.println("jpg: " + path.getFileName());
+                        break;
+                    }
+                    case "image/png": {
+                        documentHandles.add(new ImageHandle(path.toFile(), filetype));
+                        System.out.println("png: " + path.getFileName());
+                        break;
+                    }
+                    case "image/bmp": {
+                        documentHandles.add(new ImageHandle(path.toFile(), filetype));
+                        System.out.println("png: " + path.getFileName());
+                        break;
+                    }
+                    case "image/gif": {
+                        documentHandles.add(new ImageHandle(path.toFile(), filetype));
+                        System.out.println("png: " + path.getFileName());
+                        break;
+                    }
+                    case "image/tiff": {
+                        System.out.println("Not supported yet.");
                         break;
                     }
                     default: {

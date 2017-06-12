@@ -20,7 +20,7 @@ public class ImageRetrieval {
         List<ImageHandle> imageHandles = setup(args);
         Repl repl = new Repl(new Scanner(System.in), new ImageRetrievalSimple(imageHandles));
         if(args.length > 1)
-        repl.evaluator.eval(args[1]);
+            repl.evaluator.eval(args[1]);
         if(args.length > 2)
             repl.evaluator.eval(args[2]);
         repl.run();

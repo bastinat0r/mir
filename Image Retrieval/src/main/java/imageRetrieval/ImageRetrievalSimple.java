@@ -32,9 +32,20 @@ public class ImageRetrievalSimple implements EvalInterface {
         try {
             Tika tika = new Tika();
             String filetype = tika.detect(file);
-            // check if file is txt/html/...
             switch (filetype) {
                 case "image/jpeg": {
+                    imageHandle = new ImageHandle(file, filetype);
+                    break;
+                }
+                case "image/png": {
+                    imageHandle = new ImageHandle(file, filetype);
+                    break;
+                }
+                case "image/bmp": {
+                    imageHandle = new ImageHandle(file, filetype);
+                    break;
+                }
+                case "image/gif": {
                     imageHandle = new ImageHandle(file, filetype);
                     break;
                 }
@@ -50,21 +61,20 @@ public class ImageRetrievalSimple implements EvalInterface {
             return true;
         }
 
+
         imageHandles.sort(new ImageComperator(imageHandle));
-        for (int i = 0; i < 5; i++) {
-            ImageHandle imageHandle1 = imageHandles.get(i);
+        try {
+            for (int i = 0; i < 5; i++) {
+                ImageHandle imageHandle1 = imageHandles.get(i);
+                System.out.println(i + ": " + imageHandle1.file.getAbsolutePath());
+                imageHandle1.display_similarity(imageHandle);
+            }
+            ImageHandle imageHandle1 = imageHandles.get(imageHandles.size() - 1);
+            System.out.println("worst image: " + imageHandle1.file.getAbsolutePath());
             imageHandle1.display_similarity(imageHandle);
-            System.out.println(i + ": " + imageHandle.file.getAbsolutePath());
-            System.out.println("Histogram-Similarity: " + imageHandle1.getFeatures().cosine_similarity(imageHandle.getFeatures()));
-            System.out.println("Matrix-Distance: " + imageHandle1.getFeatures().matrixDistance(imageHandle.getFeatures()));
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Index is to small, all images have been displayed");
         }
-
-        ImageHandle imageHandle1 = imageHandles.get(imageHandles.size()-1);
-        imageHandle1.display_similarity(imageHandle);
-        System.out.println("worst image: " + imageHandle.file.getAbsolutePath());
-        System.out.println("Histogram-Similarity: " + imageHandle1.getFeatures().cosine_similarity(imageHandle.getFeatures()));
-        System.out.println("Matrix-Distance: " + imageHandle1.getFeatures().matrixDistance(imageHandle.getFeatures()));
-
 
         return true;
     }

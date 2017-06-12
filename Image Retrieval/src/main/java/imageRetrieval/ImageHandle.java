@@ -122,9 +122,9 @@ public class ImageHandle {
      * @return numeric value, that is bigger for more similar images
      */
     public double similarity(ImageHandle other) {
-        double s1 = this.getFeatures().matrixDistance(other.getFeatures());
-        double s2 = this.getFeatures().cosine_similarity(other.getFeatures());
-        return s2 / s1;
+        double d1 = this.getFeatures().matrixDistance(other.getFeatures());
+        double s1 = this.getFeatures().cosine_similarity_excluding_brightness(other.getFeatures());
+        return 1 / (d1  + 1) * s1;
     }
 
 
@@ -138,6 +138,13 @@ public class ImageHandle {
      * @param other image that compared to THIS
      */
     public void display_similarity(ImageHandle other) {
+        System.out.println("Histogram-Similarity: " + getFeatures().cosine_similarity(other.getFeatures()));
+        System.out.println("Histogram-Distance: " + getFeatures().euler_distance(other.getFeatures()));
+        System.out.println("Histogram-Similarity (without brightness): " +
+                getFeatures().cosine_similarity_excluding_brightness(other.getFeatures()));
+        System.out.println("Histogram-Distance (without brightness): " +
+                getFeatures().euler_distance_excluding_brightness(other.getFeatures()));
+        System.out.println("Matrix-Distance: " + getFeatures().matrixDistance(other.getFeatures()));
         try {
             BufferedImage img = ImageIO.read(file);
             BufferedImage otherImg = ImageIO.read(other.file);

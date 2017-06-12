@@ -45,6 +45,73 @@ public class Features {
     }
 
     /**
+     * compute the cosine-similarity between two histograms excluding brightness
+     * @param other other feature object
+     * @return similarity value: the bigger the value the more similar are the images
+     */
+    public double cosine_similarity_excluding_brightness(Features other) {
+        if(histogram.size() != other.histogram.size()) {
+            System.out.println("Feature Vectors didn't match in size! Something went wrong.");
+            return 0;
+        }
+        double sum = 0;
+        double other_sum = 0;
+        double result = 0;
+        for (int i = 0; i < histogram.size() - 10; i++) {
+            result += histogram.get(i) * other.histogram.get(i);
+            sum += histogram.get(i) * histogram.get(i);
+            other_sum += other.histogram.get(i) * other.histogram.get(i);
+        }
+        return result / (sqrt(sum) * sqrt(other_sum));
+    }
+
+    /**
+     * compute the euler distance between the two histogram vectors
+     *
+     * @param other other features object
+     * @return euler distance between the two histograms(normalised)
+     */
+    public double euler_distance(Features other) {
+        if(histogram.size() != other.histogram.size()) {
+            System.out.println("Feature Vectors didn't match in size! Something went wrong.");
+            return 0;
+        }
+        double sum = 0;
+        double other_sum = 0;
+        double result = 0;
+        for (int i = 0; i < histogram.size(); i++) {
+            double diff = histogram.get(i) - other.histogram.get(i);
+            result += diff * diff;
+            sum += histogram.get(i) * histogram.get(i);
+            other_sum += other.histogram.get(i) * other.histogram.get(i);
+        }
+        return sqrt(result) / (sqrt(sum) * sqrt(other_sum));
+    }
+
+    /**
+     * compute the euler distance between the two histogram vectors excluding brightness
+     *
+     * @param other other features object
+     * @return euler distance between the two histograms(normalised)
+     */
+    public double euler_distance_excluding_brightness(Features other) {
+        if(histogram.size() != other.histogram.size()) {
+            System.out.println("Feature Vectors didn't match in size! Something went wrong.");
+            return 0;
+        }
+        double sum = 0;
+        double other_sum = 0;
+        double result = 0;
+        for (int i = 0; i < histogram.size() - 10 ; i++) {
+            double diff = histogram.get(i) - other.histogram.get(i);
+            result += diff * diff;
+            sum += histogram.get(i) * histogram.get(i);
+            other_sum += other.histogram.get(i) * other.histogram.get(i);
+        }
+        return sqrt(result) / (sqrt(sum) * sqrt(other_sum));
+    }
+
+    /**
      * compute the distance between two of the matrices
      * @param other features-object containing the other grayScaleMatrix
      * @return
