@@ -12,6 +12,10 @@ import java.util.List;
 import static java.lang.Math.sqrt;
 
 /**
+ * Container Object for ImageFeatures
+ * -histogram
+ * -grayScaleMatrix
+ *
  * Created by sebastian on 6/10/17.
  */
 public class Features {
@@ -19,6 +23,11 @@ public class Features {
     public int version = 0;
     public GrayScaleSVD grayScaleSVD;
 
+    /**
+     * compute the cosine-similarity between two histograms
+     * @param other other feature object
+     * @return similarity value: the bigger the value the more similar are the images
+     */
     public double cosine_similarity(Features other) {
         if(histogram.size() != other.histogram.size()) {
             System.out.println("Feature Vectors didn't match in size! Something went wrong.");
@@ -35,6 +44,11 @@ public class Features {
         return result / (sqrt(sum) * sqrt(other_sum));
     }
 
+    /**
+     * compute the distance between two of the matrices
+     * @param other features-object containing the other grayScaleMatrix
+     * @return
+     */
     public double matrixDistance(Features other){
         return this.grayScaleSVD.getMatrix().minus(other.grayScaleSVD.getMatrix()).normF();
     }
@@ -73,6 +87,9 @@ public class Features {
         }
     }
 
+    /**
+     * Builder class to construct Features-Objects
+     */
     public static class FeaturesBuilder {
         public List<Double> histogram;
         public int version = 0;

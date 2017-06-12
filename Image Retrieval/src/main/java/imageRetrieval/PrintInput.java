@@ -8,7 +8,8 @@ package imageRetrieval;
  */
 public class PrintInput implements EvalInterface{
     /**
-     * evaluates the input and prints the result
+     * evaluates the input and prints the result (used for testing)
+     *
      * @param input
      * @return true if the repl should continue after this evaluation phase
      */

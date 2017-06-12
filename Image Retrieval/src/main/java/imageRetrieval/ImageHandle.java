@@ -14,6 +14,11 @@ import java.util.ArrayList;
 
 
 /**
+ * Container for one Image file
+ *
+ * @member file : fileHandle
+ * @member features : features that have been extracted or read from files
+ * @member version : used to decide if previously saved features are still valid
  * Created by sebastian on 6/8/17.
  */
 public class ImageHandle {
@@ -23,7 +28,10 @@ public class ImageHandle {
     public static int version = 3;
 
 
-    public void extractFeatures() {
+    /**
+     * (re) compute the features for this image
+     */
+    public void computeFeatures() {
         BufferedImage bufferedImage;
         try {
             bufferedImage = ImageIO.read(file);
@@ -43,6 +51,12 @@ public class ImageHandle {
         this.features = featuresBuilder.create();
     }
 
+    /**
+     * Compute a Matrix containing Gray-Scale values from an image
+     *
+     * @param bufferedImage input-image
+     * @return gray-scale values
+     */
     public Matrix getGrayScaleMatrix(BufferedImage bufferedImage) {
         BufferedImage imageSmall = null;
         try {
@@ -64,6 +78,12 @@ public class ImageHandle {
         return new Matrix(grayScale);
     }
 
+    /**
+     * Compute a histogram from the given image
+     *
+     * @param bufferedImage input image
+     * @return Array List containing the histogram values
+     */
     private ArrayList<Double> getHistogram(BufferedImage bufferedImage) {
         ArrayList<Double> histogramValues = new ArrayList<Double>(30);
         for (int i = 0; i < 30; i++) {
@@ -95,8 +115,12 @@ public class ImageHandle {
     }
 
 
-
-
+    /**
+     * Compute a combined similarity measure
+     *
+     * @param other the image handle of the image compared to
+     * @return numeric value, that is bigger for more similar images
+     */
     public double similarity(ImageHandle other) {
         double s1 = this.getFeatures().matrixDistance(other.getFeatures());
         double s2 = this.getFeatures().cosine_similarity(other.getFeatures());
@@ -108,6 +132,11 @@ public class ImageHandle {
         return features;
     }
 
+    /**
+     * Display two images side-by-side and the similarity value in the title
+     *
+     * @param other image that compared to THIS
+     */
     public void display_similarity(ImageHandle other) {
         try {
             BufferedImage img = ImageIO.read(file);
@@ -135,6 +164,9 @@ public class ImageHandle {
         }
     }
 
+    /**
+     * display the given image
+     */
     public void display()
     {
         try {
@@ -154,6 +186,14 @@ public class ImageHandle {
         }
     }
 
+    /**
+     * Get an Image-Handle from given image-file
+     * - tries to read the "image.jpg.features" file to get the features that where previously computed
+     * - if the features file can not be read / contains old features, the features will be computed
+     *
+     * @param file image file
+     * @param filetype filetype
+     */
     public ImageHandle(File file, String filetype) {
         this.filetype = filetype;
         this.file = file;
@@ -166,7 +206,7 @@ public class ImageHandle {
         if(features == null || features.version < this.version) {
             // recompute features
             System.out.println("Saving features version " + version + "  for " + file.getName());
-            this.extractFeatures();
+            this.computeFeatures();
 
             // serialise features
             this.features.save(featuresFile);

@@ -6,9 +6,10 @@ import Jama.SingularValueDecomposition;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 /**
+ * Contains a low-rank approximation of the 200x200 grayscale-image
+ *
  * Created by sebastian on 6/11/17.
  */
 public class GrayScaleSVD {
@@ -30,6 +31,11 @@ public class GrayScaleSVD {
         new GrayScaleSVD(other.Uk, other.Sk, other.Vtk, rank);
     }
 
+    /**
+     * compute the low-rank matrix from svd
+     *
+     * @return Matrix containing the low-rank approximation of the original image
+     */
     public Matrix getMatrix() {
         return Uk.times(Sk).times(Vtk);
     }
@@ -46,6 +52,10 @@ public class GrayScaleSVD {
         return newMatrix;
     }
 
+    /**
+     * function used to display the matrix
+     * @param m
+     */
     public static void displayMatrix( Matrix m)
     {
         BufferedImage image = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);

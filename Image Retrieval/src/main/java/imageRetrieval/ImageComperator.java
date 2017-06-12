@@ -3,6 +3,7 @@ package imageRetrieval;
 import java.util.Comparator;
 
 /**
+ * Compare two images given how similar they are towards a similar image
  * Created by sebastian on 6/12/17.
  */
 class ImageComperator implements Comparator<ImageHandle> {

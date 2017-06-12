@@ -74,7 +74,6 @@ public class DocumentFinder {
                     return FileVisitResult.CONTINUE;
                 }
                 String filetype = tika.detect(path.toFile());
-                // check if file is txt/html/...
                 switch (filetype) {
                     case "text/plain":
                         break;

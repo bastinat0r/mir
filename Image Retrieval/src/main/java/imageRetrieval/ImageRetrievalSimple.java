@@ -7,9 +7,14 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * Handles the input and computes the most similar images
+ *
  * Created by sebastian on 6/10/17.
  */
 public class ImageRetrievalSimple implements EvalInterface {
+    /**
+     * List of imageHandles that will be used to find the best fitting images
+     */
     List<ImageHandle> imageHandles;
 
     public ImageRetrievalSimple(List<ImageHandle> imageHandles) {
@@ -53,6 +58,12 @@ public class ImageRetrievalSimple implements EvalInterface {
             System.out.println("Histogram-Similarity: " + imageHandle1.getFeatures().cosine_similarity(imageHandle.getFeatures()));
             System.out.println("Matrix-Distance: " + imageHandle1.getFeatures().matrixDistance(imageHandle.getFeatures()));
         }
+
+        ImageHandle imageHandle1 = imageHandles.get(imageHandles.size()-1);
+        imageHandle1.display_similarity(imageHandle);
+        System.out.println("worst image: " + imageHandle.file.getAbsolutePath());
+        System.out.println("Histogram-Similarity: " + imageHandle1.getFeatures().cosine_similarity(imageHandle.getFeatures()));
+        System.out.println("Matrix-Distance: " + imageHandle1.getFeatures().matrixDistance(imageHandle.getFeatures()));
 
 
         return true;
